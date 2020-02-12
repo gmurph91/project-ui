@@ -1,26 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
 import './App.css';
+import Movie from './components/movie';
+const axios = require('axios');
+require('dotenv').config({ path: './.env' })
 
-function App() {
+export default class App extends Component {
+  state = {
+    movies:[],
+  }
+
+  componentDidMount() {
+    this.getMovies()
+  }
+
+  getMovies = async () => {
+    try {
+      const response = await axios.get('http://localhost:5040/movies');
+      this.setState({
+              movies: await response.data
+            })
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // getMovies = async () => {
+  //   try {
+  //     const response = await fetch('http://localhost:5040/get')
+  //     this.setState({
+  //       movies: await response.json()
+  //     })
+
+  //   } catch (err) {
+  //     console.log(err)
+  //   }
+  // }
+
+  renderMovies = () => {
+    return this.state.movies.map((movie, i) => {
+      return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating}/>
+    })
+  }
+
+render() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {this.renderMovies()}
     </div>
   );
+  }
 }
-
-export default App;
