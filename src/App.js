@@ -2,11 +2,14 @@ import React, {Component} from 'react';
 import './App.css';
 import Movie from './components/movie';
 const axios = require('axios');
-require('dotenv').config({ path: './.env' })
+require('dotenv').config();
 
 export default class App extends Component {
   state = {
     movies:[],
+    name: "",
+    year: "",
+    rating: "",
   }
 
   componentDidMount() {
@@ -15,7 +18,7 @@ export default class App extends Component {
 
   getMovies = async () => {
     try {
-      const response = await axios.get('http://localhost:5040/movies');
+      const response = await axios.get(`http://localhost:5040/movies`);
       this.setState({
               movies: await response.data
             })
@@ -26,7 +29,7 @@ export default class App extends Component {
 
   // getMovies = async () => {
   //   try {
-  //     const response = await fetch('http://localhost:5040/get')
+  //     const response = await fetch('http://localhost:5040/movies')
   //     this.setState({
   //       movies: await response.json()
   //     })
@@ -35,6 +38,21 @@ export default class App extends Component {
   //     console.log(err)
   //   }
   // }
+
+
+  addMovie = async () => {
+    try {
+      const apiCall = await axios.post('http://localhost:5040/movies/new', {
+        name:this.state.name, 
+      year: this.state.year,
+      rating:this.state.rating, 
+      })
+      await apiCall
+      this.getMovies()
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   renderMovies = () => {
     return this.state.movies.map((movie, i) => {
@@ -46,6 +64,27 @@ render() {
   return (
     <div className="App">
       {this.renderMovies()}
+      <form>
+            <label htmlFor="name">Name:</label>
+            <input id="name" type="text" value={this.state.name} onChange={(event)=>{
+              this.setState({
+                name: event.target.value
+              })
+            }}/>
+            <label htmlFor="year">Year:</label>
+            <input id="year" type="text" value={this.state.year} onChange={(event)=>{
+              this.setState({
+                year: Number(event.target.value)
+              })
+            }}/>
+            <label htmlFor="rating">Rating:</label>
+            <input id="rating" type="text" value={this.state.rating} onChange={(event)=>{
+              this.setState({
+                rating: Number(event.target.value)
+              })
+            }}/>
+            <input type="button" onClick={this.addMovie} value="Create"/>
+            </form>
     </div>
   );
   }
