@@ -12,8 +12,10 @@ export default class App extends Component {
     name: "",
     year: "",
     rating: "",
+    url: "",
     updating: false,
     deleting: false,
+    creating: false,
   }
 
   componentDidMount() {
@@ -22,7 +24,7 @@ export default class App extends Component {
 
   getMovies = async () => {
     try {
-      const response = await axios.get(`http://localhost:5040/movies`);
+      const response = await axios.get(`https://gregapis.herokuapp.com/movies`);
       this.setState({
               movies: await response.data
             })
@@ -31,31 +33,41 @@ export default class App extends Component {
     }
   }
 
-  // getMovies = async () => {
-  //   try {
-  //     const response = await fetch('http://localhost:5040/movies')
-  //     this.setState({
-  //       movies: await response.json()
-  //     })
-
-  //   } catch (err) {
-  //     console.log(err)
-  //   }
-  // }
-
-
-  addMovie = async () => {
+  addMovie = async (event) => {
+    event.preventDefault()
+    this.setState({
+      name: event.target[0].value, 
+      year: event.target[1].value,
+      rating: event.target[2].value,
+      url: event.target[3].value,
+      creating: false,
+    })
+    await(this.setState({event}))
     try {
-      const apiCall = await axios.post('http://localhost:5040/movies/new', {
-        name:this.state.name, 
+      const apiCall = await axios.post('https://gregapis.herokuapp.com/movies/new', {
+      name:this.state.name, 
       year: this.state.year,
       rating:this.state.rating, 
+      url: this.state.url,
       })
       await apiCall
       this.getMovies()
+      this.reset()
     } catch (err) {
       console.log(err)
     }
+  }
+
+  reset = () => {
+    this.setState({
+      name: "",
+    year: "",
+    rating: "",
+    url: "",
+    updating: false,
+    deleting: false,
+    creating: false,
+    })
   }
 
   openDelete = (event) => {
@@ -64,19 +76,22 @@ export default class App extends Component {
       name: event.target.name,
       deleting: true,
     })
-    console.log(this.state)
+  }
+
+  openCreate = () => {
+    this.setState({
+        creating:true,
+    })
   }
 
   deleteMovie = async () => {
     try {
       let  id=this.state.id;
-      const deleteid = await axios.delete(`http://localhost:5040/movies/delete/${id}`, {
+      const deleteid = await axios.delete(`https://gregapis.herokuapp.com/movies/delete/${id}`, {
       })
       await deleteid
-      this.setState({
-        deleting: false,
-      })
       this.getMovies()
+      this.reset()
     } catch (err) {
       console.log(err)
     }}
@@ -88,6 +103,7 @@ export default class App extends Component {
         name: event.target.name,
         year: event.target.getAttribute('data-year'),
         rating: event.target.getAttribute('data-rating'),
+        url: event.target.getAttribute('data-url'),
         updating:true,
       })
     } catch(e){
@@ -101,17 +117,20 @@ export default class App extends Component {
         name: event.target[0].value, 
         year: event.target[1].value,
         rating: event.target[2].value,
+        url: event.target[3].value,
         updating: false,
       })
       await(this.setState({event}))
       try {
-        const updateid = await axios.put(`http://localhost:5040/movies/update/${id}`, {
+        const updateid = await axios.put(`https://gregapis.herokuapp.com/movies/update/${id}`, {
           name:this.state.name, 
           year: this.state.year,
           rating:this.state.rating, 
+          url: this.state.url
           })
         await updateid
         this.getMovies()
+        this.reset()
       } catch (err) {
         console.log(err)
       }
@@ -120,8 +139,14 @@ export default class App extends Component {
       
 
   renderMovies = () => {
-    return this.state.movies.map((movie, i) => {
-      return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+    let movies = this.state.movies
+    let sortedMovies = movies.sort((function(a,b){
+      if(a.name < b.name) { return -1; }
+      if(a.name > b.name) { return 1; }
+      return 0;
+    }))
+    return sortedMovies.map((movie, i) => {
+      return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
     })
   }
 
@@ -132,22 +157,64 @@ render() {
         modal
         onClose={this.reset}
       >
-        <span>
+         {close => (
+      <div>
+        <button className="close" onClick={close}>
+          X
+        </button>
+<span>
         <form onSubmit={this.updateMovie}>
-        <label>Name
+        <label>Name:
           <input type="text" defaultValue = {this.state.name} ref={el => this.element = el} />
         </label>
-        <label>Year
+        <label>Year:
           <input type="text" defaultValue = {this.state.year} ref={el2 => this.element2 = el2} />
         </label>
-        <label>Rating
+        <label>Rating:
           <input type="text" defaultValue = {this.state.rating} ref={el3 => this.element3 = el3} />
+        </label>
+        <label>URL:
+          <input type="text" defaultValue = {this.state.url} ref={el4 => this.element4 = el4} />
         </label>
         <input type="submit" value="Update"/>
       </form>
         </span>
+      </div>
+    )}
       </Popup>
     )
+    const NewModal = () => (
+      <Popup
+          open = {this.state.creating}
+          modal
+          onClose={this.reset}
+        >
+           {close => (
+        <div>
+          <button className="close" onClick={close}>
+            X
+          </button>
+  <span>
+          <form onSubmit={this.addMovie}>
+          <label>Name:
+            <input type="text" defaultValue = {this.state.name} ref={el => this.element = el} />
+          </label>
+          <label>Year:
+            <input type="text" defaultValue = {this.state.year} ref={el2 => this.element2 = el2} />
+          </label>
+          <label>Rating:
+            <input type="text" defaultValue = {this.state.rating} ref={el3 => this.element3 = el3} />
+          </label>
+          <label>URL:
+          <input type="text" defaultValue = {this.state.url} ref={el4 => this.element4 = el4} />
+        </label>
+          <input type="submit" value="Create"/>
+        </form>
+          </span>
+        </div>
+      )}
+        </Popup>
+      )
     const DeleteModal = () => (
       <Popup
           open = {this.state.deleting}
@@ -156,36 +223,22 @@ render() {
         >
           <span>
           Are you sure you want to delete {this.state.name}?
-          <button onClick={this.deleteMovie}>Yes</button>
+          <div>
+          <button className="bluebutton" onClick={this.deleteMovie}>Yes</button>
+          <button className="bluebutton" onClick={this.reset}>Cancel</button>
+          </div>
           </span>
         </Popup>
       )
   return (
     <div className="App">
+      <div className="main">
       {this.renderMovies()}
+      <NewModal/>
       <UpdateModal/>
       <DeleteModal/>
-      <form>
-            <label htmlFor="name">Name:</label>
-            <input id="name" type="text" value={this.state.name} onChange={(event)=>{
-              this.setState({
-                name: event.target.value
-              })
-            }}/>
-            <label htmlFor="year">Year:</label>
-            <input id="year" type="text" value={this.state.year} onChange={(event)=>{
-              this.setState({
-                year: Number(event.target.value)
-              })
-            }}/>
-            <label htmlFor="rating">Rating:</label>
-            <input id="rating" type="text" value={this.state.rating} onChange={(event)=>{
-              this.setState({
-                rating: Number(event.target.value)
-              })
-            }}/>
-            <input type="button" onClick={this.addMovie} value="Create"/>
-            </form>
+      </div>
+      <button className="bluebutton new" onClick={this.openCreate}>New</button>
     </div>
   );
   }
