@@ -46,3 +46,24 @@
 .movie li {
   list-style: none;
 }
+
+.deleteIcon {
+  padding: 5px;
+  border: 1px solid white;
+}
+
+.deleteIcon:hover {
+  border: 1px solid lightblue;
+  cursor: pointer;
+}
+
+.updateIcon {
+  padding: 5px;
+  border: 1px solid white;
+}
+
+.updateIcon:hover {
+  border: 1px solid lightblue;
+  cursor: pointer;
+}
+
