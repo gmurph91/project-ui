@@ -2,12 +2,15 @@ import React, {Component} from 'react';
 import './App.css';
 import Movie from './components/movie';
 import Popup from "reactjs-popup";
+import { Dropdown } from 'reactjs-dropdown-component';
 const axios = require('axios');
 require('dotenv').config();
 
 
 export default class App extends Component {
-  state = {
+  constructor(props) {
+    super(props)
+    this.state = {
     movies:[],
     name: "",
     year: "",
@@ -16,7 +19,45 @@ export default class App extends Component {
     updating: false,
     deleting: false,
     creating: false,
-  }
+    sortlist: [
+      {
+      id: 0,
+      title: 'By Title A-Z',
+      selected: true,
+      key: 'sortlist'
+},{
+  id: 1,
+  title: 'By Title Z-A',
+  selected: false,
+  key: 'sortlist'
+},{
+  id: 2,
+  title: 'By Year (Newest)',
+  selected: false,
+  key: 'sortlist'
+},{
+  id: 3,
+  title: 'By Year (Oldest)',
+  selected: false,
+  key: 'sortlist'
+},
+{
+  id: 4,
+  title: 'By Rating (Highest)',
+  selected: false,
+  key: 'sortlist'
+},{
+  id: 5,
+  title: 'By Rating (Lowest)',
+  selected: false,
+  key: 'sortlist'
+},
+], 
+  active: [{id: 0,
+    title: 'By Title A-Z',
+    selected: true,
+    key: 'sortlist'}]
+    }}
 
   componentDidMount() {
     this.getMovies()
@@ -84,6 +125,15 @@ export default class App extends Component {
     })
   }
 
+  resetThenSet = (id, key) => {
+    let temp = JSON.parse(JSON.stringify(this.state[key]));
+    temp.forEach(item => item.selected = false);
+    temp[id].selected = true;
+    this.setState({
+          active: temp[id]
+    });
+}
+
   deleteMovie = async () => {
     try {
       let  id=this.state.id;
@@ -136,10 +186,13 @@ export default class App extends Component {
       }
     }
 
-      
+  sorting = (e) => {
+    console.log(e.target.value)
+  }
 
   renderMovies = () => {
     let movies = this.state.movies
+    if (this.state.active.id===0){
     let sortedMovies = movies.sort((function(a,b){
       if(a.name < b.name) { return -1; }
       if(a.name > b.name) { return 1; }
@@ -148,7 +201,55 @@ export default class App extends Component {
     return sortedMovies.map((movie, i) => {
       return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
     })
-  }
+  } else if (this.state.active.id===1){
+      let sortedMovies = movies.sort((function(a,b){
+        if(b.name < a.name) { return -1; }
+        if(b.name > a.name) { return 1; }
+        return 0;
+      }))
+    return sortedMovies.map((movie, i) => {
+      return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+    })
+  } else if (this.state.active.id===2){
+    let sortedMovies = movies.sort((function(a,b){
+      if(b.year < a.year) { return -1; }
+      if(b.year > a.year) { return 1; }
+      return 0;
+    }))
+  return sortedMovies.map((movie, i) => {
+    return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+  })
+} else if (this.state.active.id===3){
+  let sortedMovies = movies.sort((function(a,b){
+    if(a.year < b.year) { return -1; }
+      if(a.year > b.year) { return 1; }
+    return 0;
+  }))
+return sortedMovies.map((movie, i) => {
+  return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+})
+} else if (this.state.active.id===4){
+  let sortedMovies = movies.sort((function(a,b){
+    if(b.rating < a.rating) { return -1; }
+    if(b.rating > a.rating) { return 1; }
+    return 0;
+  }))
+return sortedMovies.map((movie, i) => {
+  return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+})
+} else if (this.state.active.id===5){
+let sortedMovies = movies.sort((function(a,b){
+  if(a.rating < b.rating) { return -1; }
+    if(a.rating > b.rating) { return 1; }
+  return 0;
+}))
+return sortedMovies.map((movie, i) => {
+return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+})
+} else return movies.map((movie, i) => {
+    return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+  })
+}
 
 render() {
   const UpdateModal = () => (
@@ -197,7 +298,7 @@ render() {
   <span>
           <form onSubmit={this.addMovie}>
           <label>Name:
-            <input type="text" defaultValue = {this.state.name} ref={el => this.element = el} />
+            <input type="text" defaultValue = {this.state.name} ref={el => this.element = el} autoFocus/>
           </label>
           <label>Year:
             <input type="text" defaultValue = {this.state.year} ref={el2 => this.element2 = el2} />
@@ -232,6 +333,11 @@ render() {
       )
   return (
     <div className="App">
+      <header><Dropdown
+                              title="Sort"
+                              list={this.state.sortlist}
+                              resetThenSet={this.resetThenSet}
+                        /></header>
       <div className="main">
       {this.renderMovies()}
       <NewModal/>

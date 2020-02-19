@@ -3,6 +3,9 @@
   width: 100%;
   min-height:100vh;
   background: black;
+  padding-top: 6px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
 }
 
 p {
@@ -107,7 +110,11 @@ span {
   color: white;
   border: none;
   border-radius: 4px;
-  padding-left: 4px;
+  padding: 5px;
+}
+
+.popup-content label input:focus {
+  border-radius: 4px;
 }
 
 .popup-content input[type=submit] {
@@ -142,8 +149,8 @@ span {
   position: relative;
   background: none;
   border: none;
-  top: -15px;
-  left: 51%;
+  top: -13px;
+  left: 50%;
   cursor: pointer;
   color: white;
 }
@@ -219,4 +226,31 @@ span {
 .rating:before {
   content: url("/star.png");
   margin-right: 3px;
+}
+
+.dd-wrapper {
+  font-size: 16px;
+  width: 191px;
+}
+
+.dd-wrapper .dd-header {
+  margin-left: 10px;
+  line-height: 20px !important;
+}
+
+.dd-wrapper .dd-list {
+  margin-left: 10px;
+  width: 95% !important;
+  padding: 0px !important;
+  overflow-y: hidden !important;
+  border: none !important;
+}
+
+.dd-wrapper .dd-header-title {
+  margin: 2px 8px !important;
+}
+
+.dd-wrapper .dd-list-item:hover {
+  color: #fff;
+  background-color: rgb(46,124,228) !important;
 }
