@@ -15,6 +15,7 @@ export default class App extends Component {
     name: "",
     year: "",
     rating: "",
+    loading: true,
     url: "",
     count: "0",
     updating: false,
@@ -64,6 +65,16 @@ export default class App extends Component {
 
   componentDidMount() {
     this.getMovies()
+    this.loading()
+  }
+
+  loading = () => {
+    var element = document.getElementById("loadingIcon")
+    if (this.state.loading) {
+      element.classList.remove("hidden")
+    } else {
+      element.classList.add("hidden")
+    }
   }
 
   getMovies = async () => {
@@ -73,8 +84,10 @@ export default class App extends Component {
               movies: await response.data,
             })
             this.setState({
-              count: this.state.movies.length
+              count: this.state.movies.length,
+              loading: false
             })
+            this.loading()
     } catch (err) {
       console.error(err);
     }
@@ -414,6 +427,7 @@ render() {
       <UpdateModal/>
       <DeleteModal/>
       <Trailer/>
+      <img id="loadingIcon" src="loading.gif" alt="loading"/>
       </div>
     </div>
   );
