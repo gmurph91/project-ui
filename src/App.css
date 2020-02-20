@@ -31,7 +31,7 @@ header {
 h1 {
   color: white;
     line-height: 0px;
-    font-size:calc(12px + 1vw);
+    font-size:calc(12px + .9vw);
     font-weight: 600;
     margin-left: 15px;
     align-self: center;
@@ -117,7 +117,7 @@ span {
   cursor: pointer;
 }
 
-.popup-content {
+.form-content {
   border: 2px solid darkgray !important;
   background-color: black !important;
   color: white;
@@ -299,4 +299,58 @@ span {
 .moviedesc {
   overflow-x: hidden;
   text-overflow: ellipsis;
+}
+
+.trailer-content {
+  background-color: black !important;
+  width: 89% !important;
+  border: none !important;
+  padding: none !important;
+  position: relative;
+	padding-bottom: 48.25% !important; /* 16:9 */
+	padding-top: 25px !important;
+	height: 0;
+}
+
+.trailer-content iframe {
+  position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.playIcon {
+  padding-left: 60px;
+  padding-right: 60px;
+  padding-top: 97px;
+  padding-bottom: 76px;
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+
+.thumbContainer:hover .playIcon {
+  opacity: 70%;
+}
+
+.playIcon:hover {
+  cursor: pointer;
+}
+
+.close2 {
+  position: relative;
+  background: #626262;
+  border: none;
+  border-radius: 50%;
+  top: -38px;
+  height: 28px;
+  width: 28px;
+  font-size: 20px;
+  left: 50.5%;
+  cursor: pointer;
+  color: white;
+  z-index: 99;
 }

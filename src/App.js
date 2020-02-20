@@ -20,6 +20,8 @@ export default class App extends Component {
     updating: false,
     deleting: false,
     creating: false,
+    playing: false,
+    trailer: "",
     sortlist: [
       {
       id: 0,
@@ -85,6 +87,7 @@ export default class App extends Component {
       year: event.target[1].value,
       rating: event.target[2].value,
       url: event.target[3].value,
+      trailer: event.target[4].value,
       creating: false,
     })
     await(this.setState({event}))
@@ -94,6 +97,7 @@ export default class App extends Component {
       year: this.state.year,
       rating:this.state.rating, 
       url: this.state.url,
+      trailer: this.state.trailer,
       })
       await apiCall
       this.getMovies()
@@ -109,9 +113,11 @@ export default class App extends Component {
     year: "",
     rating: "",
     url: "",
+    trailer: "",
     updating: false,
     deleting: false,
     creating: false,
+    playing: false,
     })
   }
 
@@ -158,11 +164,37 @@ export default class App extends Component {
         year: event.target.getAttribute('data-year'),
         rating: event.target.getAttribute('data-rating'),
         url: event.target.getAttribute('data-url'),
+        trailer: event.target.getAttribute('data-trailer'),
         updating:true,
       })
     } catch(e){
       console.log(e)
     }}
+
+    play = async (event) => {
+      try {
+      const trailerinput = event.target.getAttribute('data-trailer')
+      const trailerID = this.getvideoId(String(trailerinput))
+      const trailerurl = "https://www.youtube.com/embed/" + trailerID + "?autoplay=1"
+      this.setState({
+        trailer: trailerurl,
+        playing:true,
+      })
+    } catch(e){
+      console.log(e)
+    }
+  }
+
+ getvideoId = (url) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+
+    return (match && match[2].length === 11)
+      ? match[2]
+      : null;
+      
+}
+
 
     updateMovie = async (event) => {
       event.preventDefault()
@@ -172,6 +204,7 @@ export default class App extends Component {
         year: event.target[1].value,
         rating: event.target[2].value,
         url: event.target[3].value,
+        trailer: event.target[4].value,
         updating: false,
       })
       await(this.setState({event}))
@@ -180,7 +213,8 @@ export default class App extends Component {
           name:this.state.name, 
           year: this.state.year,
           rating:this.state.rating, 
-          url: this.state.url
+          url: this.state.url,
+          trailer: this.state.trailer
           })
         await updateid
         this.getMovies()
@@ -202,7 +236,7 @@ export default class App extends Component {
       return 0;
     }))
     return sortedMovies.map((movie, i) => {
-      return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+      return <Movie key={i} name={movie.name} year={movie.year} trailer={movie.trailer} play={this.play} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
     })
   } else if (this.state.active.id===1){
       let sortedMovies = movies.sort((function(a,b){
@@ -213,7 +247,7 @@ export default class App extends Component {
         return 0;
       }))
     return sortedMovies.map((movie, i) => {
-      return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+      return <Movie key={i} name={movie.name} year={movie.year} trailer={movie.trailer} play={this.play} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
     })
   } else if (this.state.active.id===2){
     let sortedMovies = movies.sort((function(a,b){
@@ -222,7 +256,7 @@ export default class App extends Component {
       return 0;
     }))
   return sortedMovies.map((movie, i) => {
-    return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+    return <Movie key={i} name={movie.name} year={movie.year} trailer={movie.trailer} play={this.play} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
   })
 } else if (this.state.active.id===3){
   let sortedMovies = movies.sort((function(a,b){
@@ -231,7 +265,7 @@ export default class App extends Component {
     return 0;
   }))
 return sortedMovies.map((movie, i) => {
-  return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+  return <Movie key={i} name={movie.name} year={movie.year} trailer={movie.trailer} play={this.play} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
 })
 } else if (this.state.active.id===4){
   let sortedMovies = movies.sort((function(a,b){
@@ -240,7 +274,7 @@ return sortedMovies.map((movie, i) => {
     return 0;
   }))
 return sortedMovies.map((movie, i) => {
-  return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+  return <Movie key={i} name={movie.name} year={movie.year} trailer={movie.trailer} play={this.play} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
 })
 } else if (this.state.active.id===5){
 let sortedMovies = movies.sort((function(a,b){
@@ -249,10 +283,10 @@ let sortedMovies = movies.sort((function(a,b){
   return 0;
 }))
 return sortedMovies.map((movie, i) => {
-return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+return <Movie key={i} name={movie.name} year={movie.year} trailer={movie.trailer} play={this.play} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
 })
 } else return movies.map((movie, i) => {
-    return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+    return <Movie key={i} name={movie.name} year={movie.year} trailer={movie.trailer} play={this.play} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
   })
 }
 
@@ -262,6 +296,7 @@ render() {
         open = {this.state.updating}
         modal
         onClose={this.reset}
+        className="form"
       >
          {close => (
       <div>
@@ -279,8 +314,11 @@ render() {
         <label>Rating:
           <input type="text" defaultValue = {this.state.rating} ref={el3 => this.element3 = el3} />
         </label>
-        <label>URL:
+        <label>Image URL:
           <input type="text" defaultValue = {this.state.url} ref={el4 => this.element4 = el4} />
+        </label>
+        <label>Trailer URL:
+          <input type="text" defaultValue = {this.state.trailer} ref={el5 => this.element5 = el5} />
         </label>
         <input type="submit" value="Update"/>
       </form>
@@ -294,6 +332,7 @@ render() {
           open = {this.state.creating}
           modal
           onClose={this.reset}
+          className="form"
         >
            {close => (
         <div>
@@ -311,8 +350,11 @@ render() {
           <label>Rating:
             <input type="text" defaultValue = {this.state.rating} ref={el3 => this.element3 = el3} />
           </label>
-          <label>URL:
+          <label>Image URL:
           <input type="text" defaultValue = {this.state.url} ref={el4 => this.element4 = el4} />
+        </label>
+        <label>Trailer URL:
+          <input type="text" defaultValue = {this.state.trailer} ref={el5 => this.element5 = el5} />
         </label>
           <input type="submit" value="Create"/>
         </form>
@@ -326,8 +368,10 @@ render() {
           open = {this.state.deleting}
           modal
           onClose={this.reset}
+          className="form"
         >
-          <span>
+        
+  <span>
           Are you sure you want to delete {this.state.name}?
           <div>
           <button className="bluebutton" onClick={this.deleteMovie}>Yes</button>
@@ -336,6 +380,25 @@ render() {
           </span>
         </Popup>
       )
+      const Trailer = () => (
+        <Popup
+            open = {this.state.playing}
+            modal
+            onClose={this.reset}
+            className="trailer"
+          >
+            {close => (
+        <div>
+          <button className="close2" onClick={close}>
+            X
+          </button>
+            <span>
+            <iframe title="trailer" frameBorder="0" src={this.state.trailer}></iframe>
+            </span>
+            </div>
+            )}
+          </Popup>
+        )
   return (
     <div className="App">
       <header><h1>Movies ({this.state.count})</h1><Dropdown
@@ -350,6 +413,7 @@ render() {
       <NewModal/>
       <UpdateModal/>
       <DeleteModal/>
+      <Trailer/>
       </div>
     </div>
   );
