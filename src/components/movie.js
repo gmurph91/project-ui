@@ -8,10 +8,10 @@ export default class Movie extends Component{
                     <img className="updateIcon" src="edit.png" name={this.props.name} data-year={this.props.year} data-rating={this.props.rating} data-url={this.props.url} id={this.props.id} alt="update" onClick={this.props.update}/>
                     <img className="deleteIcon" src="trash.png" name={this.props.name} id={this.props.id} alt="delete" onClick={this.props.delete}/>
                     </div>
-                    <p>{this.props.name}</p>
+                    <p className="moviedesc">{this.props.name}</p>
                     <div className="secondLine">
-                    <p className="">{this.props.year}</p>
-                    <p className="rating">{this.props.rating}</p>
+                    <p className="moviedesc">{this.props.year}</p>
+                    <p className="rating moviedesc">{this.props.rating}</p>
                     </div>
                 </div>
         )

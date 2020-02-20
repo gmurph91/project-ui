@@ -22,12 +22,12 @@ export default class App extends Component {
     sortlist: [
       {
       id: 0,
-      title: 'By Title A-Z',
+      title: 'By Title (A-Z)',
       selected: true,
       key: 'sortlist'
 },{
   id: 1,
-  title: 'By Title Z-A',
+  title: 'By Title (Z-A)',
   selected: false,
   key: 'sortlist'
 },{
@@ -54,7 +54,7 @@ export default class App extends Component {
 },
 ], 
   active: [{id: 0,
-    title: 'By Title A-Z',
+    title: 'By Title (A-Z)',
     selected: true,
     key: 'sortlist'}]
     }}
@@ -186,16 +186,15 @@ export default class App extends Component {
       }
     }
 
-  sorting = (e) => {
-    console.log(e.target.value)
-  }
-
   renderMovies = () => {
     let movies = this.state.movies
+    
     if (this.state.active.id===0){
     let sortedMovies = movies.sort((function(a,b){
-      if(a.name < b.name) { return -1; }
-      if(a.name > b.name) { return 1; }
+      let nameA = String(a.name).replace( /^(an?|the)\s/i, '' );
+      let nameB = String(b.name).replace( /^(an?|the)\s/i, '' );
+      if(nameA < nameB) { return -1; }
+      if(nameA > nameB) { return 1; }
       return 0;
     }))
     return sortedMovies.map((movie, i) => {
@@ -203,8 +202,10 @@ export default class App extends Component {
     })
   } else if (this.state.active.id===1){
       let sortedMovies = movies.sort((function(a,b){
-        if(b.name < a.name) { return -1; }
-        if(b.name > a.name) { return 1; }
+      let nameA = String(a.name).replace( /^(an?|the)\s/i, '' );
+      let nameB = String(b.name).replace( /^(an?|the)\s/i, '' );
+        if(nameB < nameA) { return -1; }
+        if(nameB > nameA) { return 1; }
         return 0;
       }))
     return sortedMovies.map((movie, i) => {
