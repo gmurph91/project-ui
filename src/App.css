@@ -9,6 +9,10 @@
   padding-bottom: 16px;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 html {
   overflow: hidden;
   height: 100%;
@@ -27,9 +31,11 @@ header {
 h1 {
   color: white;
     line-height: 0px;
-    font-size: 26px;
+    font-size:calc(12px + 1vw);
     font-weight: 600;
     margin-left: 15px;
+    align-self: center;
+    min-width: fit-content;
 }
 
 p {
@@ -260,28 +266,25 @@ span {
 }
 
 .dd-wrapper {
-  font-size: 16px;
-  width: 175px;
+  font-size: 16px !important;
+  width: 16% !important;
+  min-width: 150px;
   align-self: center;
+  margin-left: 16px;
 }
 
 .dd-wrapper .dd-header {
-  margin-left: 20px;
   line-height: 20px !important;
   background-color: black !important;
   color: white;
 }
 
 .dd-wrapper .dd-list {
-  margin-left: 10px;
-  width: 95% !important;
   padding: 0px !important;
   overflow-y: hidden !important;
   border: none !important;
   background-color: black !important;
     color: white;
-    width: 90% !important;
-    margin-left: 20px;
 }
 
 .dd-wrapper .dd-header-title {
