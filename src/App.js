@@ -16,6 +16,7 @@ export default class App extends Component {
     year: "",
     rating: "",
     url: "",
+    count: "0",
     updating: false,
     deleting: false,
     creating: false,
@@ -67,7 +68,10 @@ export default class App extends Component {
     try {
       const response = await axios.get(`https://gregapis.herokuapp.com/movies`);
       this.setState({
-              movies: await response.data
+              movies: await response.data,
+            })
+            this.setState({
+              count: this.state.movies.length
             })
     } catch (err) {
       console.error(err);
@@ -334,18 +338,19 @@ render() {
       )
   return (
     <div className="App">
-      <header><Dropdown
+      <header><h1>Movies ({this.state.count})</h1><Dropdown
                               title="Sort"
                               list={this.state.sortlist}
                               resetThenSet={this.resetThenSet}
-                        /></header>
+                        />
+      <button className="bluebutton new" onClick={this.openCreate}>New</button>
+      </header>
       <div className="main">
       {this.renderMovies()}
       <NewModal/>
       <UpdateModal/>
       <DeleteModal/>
       </div>
-      <button className="bluebutton new" onClick={this.openCreate}>New</button>
     </div>
   );
   }

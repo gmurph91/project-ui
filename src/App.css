@@ -6,10 +6,30 @@
   padding-top: 6px;
   font-family: 'Roboto', sans-serif;
   font-size: 16px;
+  padding-bottom: 16px;
+}
+
+html {
+  overflow: hidden;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  overflow: auto;
 }
 
 header {
+  display: flex;
   margin-top: 5px;
+}
+
+h1 {
+  color: white;
+    line-height: 0px;
+    font-size: 26px;
+    font-weight: 600;
+    margin-left: 15px;
 }
 
 p {
@@ -228,8 +248,10 @@ span {
 }
 
 .new {
-  margin-top:10px;
-  margin-bottom: 20px;
+  margin-left: auto;
+    margin-right: 15px;
+    margin-top: 0px;
+    margin-bottom: 0px;
 }
 
 .rating:before {
@@ -239,11 +261,12 @@ span {
 
 .dd-wrapper {
   font-size: 16px;
-  width: 191px;
+  width: 175px;
+  align-self: center;
 }
 
 .dd-wrapper .dd-header {
-  margin-left: 10px;
+  margin-left: 20px;
   line-height: 20px !important;
   background-color: black !important;
   color: white;
@@ -257,6 +280,8 @@ span {
   border: none !important;
   background-color: black !important;
     color: white;
+    width: 90% !important;
+    margin-left: 20px;
 }
 
 .dd-wrapper .dd-header-title {
