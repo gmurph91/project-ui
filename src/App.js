@@ -29,6 +29,7 @@ export default class App extends Component {
       plot: "",
       director: "",
       actors: "",
+      type: "",
     sortlist: [
       {
       id: 0,
@@ -119,7 +120,8 @@ export default class App extends Component {
               runtime: response.data.Runtime,
               plot: response.data.Plot,
               director: response.data.Director,
-              actors: response.data.Actors
+              actors: response.data.Actors,
+              type: response.data.Type
             })
     try {
       const apiCall = await axios.post('https://gregapis.herokuapp.com/movies/new', {
@@ -133,6 +135,7 @@ export default class App extends Component {
       plot: this.state.plot,
       director: this.state.director,
       actors: this.state.actors,
+      type: this.state.type
       })
       await apiCall
       this.getMovies()
@@ -159,6 +162,7 @@ export default class App extends Component {
     plot: "",
     director: "",
     actors: "",
+    type: "",
     })
   }
 
@@ -276,6 +280,7 @@ export default class App extends Component {
               plot: response.data.Plot,
               director: response.data.Director,
               actors: response.data.Actors,
+              type: response.data.Type
             })
     try {
       const updateid = await axios.put(`https://gregapis.herokuapp.com/movies/update/${id}`, {
@@ -289,6 +294,7 @@ export default class App extends Component {
       plot: this.state.plot,
       director: this.state.director,
       actors: this.state.actors,
+      type: this.state.type
       })
       await updateid
       this.getMovies()
@@ -298,9 +304,21 @@ export default class App extends Component {
       }
     }
 
+   
+
   renderMovies = () => {
-    let movies = this.state.movies
-    
+    try{
+    let all = this.state.movies
+    let reduction = all.reduce( function(acc, obj) {
+      let key = obj["type"]
+      if (!acc[key]) {
+        acc[key] = []
+      }
+      acc[key].push(obj)
+      return acc
+    })
+    let movies = reduction.movie
+    let series = reduction.series
     if (this.state.active.id===0){
     let sortedMovies = movies.sort((function(a,b){
       let nameA = String(a.name).replace( /^(an?|the)\s/i, '' );
@@ -362,7 +380,7 @@ return sortedMovies.map((movie, i) => {
 } else return movies.map((movie, i) => {
     return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} trailer={movie.trailer} rated={movie.rated} runtime={movie.runtime} plot={movie.plot} director={movie.director} actors={movie.actors} play={this.play} id={movie._id} update={this.openUpdate} delete={this.openDelete} getInfo={this.getInfo}/>
   })
-}
+} catch(e){console.log(e)}}
 render() {
   const UpdateModal = () => (
     <Popup
