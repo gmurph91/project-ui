@@ -138,7 +138,7 @@ span {
 
 .popup-content label input {
   display: block;
-  width: 85%;
+  width: 80%;
   background-color: #3C4042;
   color: white;
   border: none;
@@ -323,10 +323,10 @@ span {
 .playIcon {
   padding-left: 60px;
   padding-right: 60px;
-  padding-top: 97px;
+  padding-top: 65px;
   padding-bottom: 76px;
   position: absolute;
-  top: 0%;
+  top: 32px;
   left: 0%;
   opacity: 0;
   transition: opacity .35s ease;
@@ -337,6 +337,23 @@ span {
 }
 
 .playIcon:hover {
+  cursor: pointer;
+}
+
+.moreIcon {
+  padding: 5px;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+    opacity: 0;
+  transition: opacity .35s ease;
+}
+
+.thumbContainer:hover .moreIcon {
+  opacity: 1;
+}
+
+.moreIcon:hover {
   cursor: pointer;
 }
 
@@ -365,4 +382,20 @@ span {
 .hidden {
   display: none;
   visibility: hidden;
+}
+
+.info-content {
+  border: 2px solid darkgray !important;
+  background-color: black !important;
+  color: white;
+  border-radius: 5px;
+  padding: 14px !important;
+}
+
+.info-content p:first-of-type {
+  margin-top: -13px;
+}
+
+.info-content p:last-of-type {
+  margin-bottom: 4px;
 }

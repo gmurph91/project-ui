@@ -4,7 +4,7 @@ import Movie from './components/movie';
 import Popup from "reactjs-popup";
 import { Dropdown } from 'reactjs-dropdown-component';
 const axios = require('axios');
-require('dotenv').config();
+require('dotenv').config()
 
 
 export default class App extends Component {
@@ -22,7 +22,13 @@ export default class App extends Component {
     deleting: false,
     creating: false,
     playing: false,
+    reading: false,
     trailer: "",
+    rated: "",
+      runtime: "",
+      plot: "",
+      director: "",
+      actors: "",
     sortlist: [
       {
       id: 0,
@@ -93,17 +99,32 @@ export default class App extends Component {
     }
   }
 
+  getInfo = async (event) => {
+    
+  }
+
   addMovie = async (event) => {
     event.preventDefault()
     this.setState({
       name: event.target[0].value, 
       year: event.target[1].value,
-      rating: event.target[2].value,
-      url: event.target[3].value,
-      trailer: event.target[4].value,
+      trailer: event.target[2].value,
       creating: false,
     })
     await(this.setState({event}))
+    let t = this.state.name
+      let y = this.state.year
+      const response = await axios.get(`http://www.omdbapi.com/?t=${t}&y=${y}&apikey=cea84f0e`);
+      this.setState({
+              year: response.data.Year,
+              rating: response.data.imdbRating,
+              url: response.data.Poster,
+              rated: response.data.Rated,
+              runtime: response.data.Runtime,
+              plot: response.data.Plot,
+              director: response.data.Director,
+              actors: response.data.Actors
+            })
     try {
       const apiCall = await axios.post('https://gregapis.herokuapp.com/movies/new', {
       name:this.state.name, 
@@ -111,6 +132,11 @@ export default class App extends Component {
       rating:this.state.rating, 
       url: this.state.url,
       trailer: this.state.trailer,
+      rated: this.state.rated,
+      runtime: this.state.runtime,
+      plot: this.state.plot,
+      director: this.state.director,
+      actors: this.state.actors,
       })
       await apiCall
       this.getMovies()
@@ -131,6 +157,12 @@ export default class App extends Component {
     deleting: false,
     creating: false,
     playing: false,
+    reading: false,
+    rated: "",
+    runtime: "",
+    plot: "",
+    director: "",
+    actors: "",
     })
   }
 
@@ -145,6 +177,12 @@ export default class App extends Component {
   openCreate = () => {
     this.setState({
         creating:true,
+    })
+  }
+
+  openInfo = () => {
+    this.setState({
+        reading:true,
     })
   }
 
@@ -175,8 +213,6 @@ export default class App extends Component {
         id: event.target.id,
         name: event.target.name,
         year: event.target.getAttribute('data-year'),
-        rating: event.target.getAttribute('data-rating'),
-        url: event.target.getAttribute('data-url'),
         trailer: event.target.getAttribute('data-trailer'),
         updating:true,
       })
@@ -215,25 +251,41 @@ export default class App extends Component {
       this.setState({
         name: event.target[0].value, 
         year: event.target[1].value,
-        rating: event.target[2].value,
-        url: event.target[3].value,
-        trailer: event.target[4].value,
+        trailer: event.target[2].value,
         updating: false,
       })
       await(this.setState({event}))
-      try {
-        const updateid = await axios.put(`https://gregapis.herokuapp.com/movies/update/${id}`, {
-          name:this.state.name, 
-          year: this.state.year,
-          rating:this.state.rating, 
-          url: this.state.url,
-          trailer: this.state.trailer
-          })
-        await updateid
-        this.getMovies()
-        this.reset()
-      } catch (err) {
-        console.log(err)
+    let t = this.state.name
+      let y = this.state.year
+      const response = await axios.get(`http://www.omdbapi.com/?t=${t}&y=${y}&apikey=cea84f0e`);
+      this.setState({
+              year: response.data.Year,
+              rating: response.data.imdbRating,
+              url: response.data.Poster,
+              rated: response.data.Rated,
+              runtime: response.data.Runtime,
+              plot: response.data.Plot,
+              director: response.data.Director,
+              actors: response.data.Actors,
+            })
+    try {
+      const updateid = await axios.put(`https://gregapis.herokuapp.com/movies/update/${id}`, {
+        name:this.state.name, 
+      year: this.state.year,
+      rating:this.state.rating, 
+      url: this.state.url,
+      trailer: this.state.trailer,
+      rated: this.state.rated,
+      runtime: this.state.runtime,
+      plot: this.state.plot,
+      director: this.state.director,
+      actors: this.state.actors,
+      })
+      await updateid
+      this.getMovies()
+      this.reset()
+    } catch (err) {
+      console.log(err)
       }
     }
 
@@ -249,7 +301,7 @@ export default class App extends Component {
       return 0;
     }))
     return sortedMovies.map((movie, i) => {
-      return <Movie key={i} name={movie.name} year={movie.year} trailer={movie.trailer} play={this.play} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+      return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} trailer={movie.trailer} rated={movie.rated} runtime={movie.runtime} plot={movie.plot} director={movie.director} actors={movie.actors} play={this.play} id={movie._id} update={this.openUpdate} delete={this.openDelete} getInfo={this.getInfo}/>
     })
   } else if (this.state.active.id===1){
       let sortedMovies = movies.sort((function(a,b){
@@ -260,7 +312,7 @@ export default class App extends Component {
         return 0;
       }))
     return sortedMovies.map((movie, i) => {
-      return <Movie key={i} name={movie.name} year={movie.year} trailer={movie.trailer} play={this.play} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+      return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} trailer={movie.trailer} rated={movie.rated} runtime={movie.runtime} plot={movie.plot} director={movie.director} actors={movie.actors} play={this.play} id={movie._id} update={this.openUpdate} delete={this.openDelete} getInfo={this.getInfo}/>
     })
   } else if (this.state.active.id===2){
     let sortedMovies = movies.sort((function(a,b){
@@ -269,7 +321,7 @@ export default class App extends Component {
       return 0;
     }))
   return sortedMovies.map((movie, i) => {
-    return <Movie key={i} name={movie.name} year={movie.year} trailer={movie.trailer} play={this.play} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+    return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} trailer={movie.trailer} rated={movie.rated} runtime={movie.runtime} plot={movie.plot} director={movie.director} actors={movie.actors} play={this.play} id={movie._id} update={this.openUpdate} delete={this.openDelete} getInfo={this.getInfo}/>
   })
 } else if (this.state.active.id===3){
   let sortedMovies = movies.sort((function(a,b){
@@ -278,7 +330,7 @@ export default class App extends Component {
     return 0;
   }))
 return sortedMovies.map((movie, i) => {
-  return <Movie key={i} name={movie.name} year={movie.year} trailer={movie.trailer} play={this.play} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+  return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} trailer={movie.trailer} rated={movie.rated} runtime={movie.runtime} plot={movie.plot} director={movie.director} actors={movie.actors} play={this.play} id={movie._id} update={this.openUpdate} delete={this.openDelete} getInfo={this.getInfo}/>
 })
 } else if (this.state.active.id===4){
   let sortedMovies = movies.sort((function(a,b){
@@ -287,7 +339,7 @@ return sortedMovies.map((movie, i) => {
     return 0;
   }))
 return sortedMovies.map((movie, i) => {
-  return <Movie key={i} name={movie.name} year={movie.year} trailer={movie.trailer} play={this.play} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+  return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} trailer={movie.trailer} rated={movie.rated} runtime={movie.runtime} plot={movie.plot} director={movie.director} actors={movie.actors} play={this.play} id={movie._id} update={this.openUpdate} delete={this.openDelete} getInfo={this.getInfo}/>
 })
 } else if (this.state.active.id===5){
 let sortedMovies = movies.sort((function(a,b){
@@ -296,13 +348,12 @@ let sortedMovies = movies.sort((function(a,b){
   return 0;
 }))
 return sortedMovies.map((movie, i) => {
-return <Movie key={i} name={movie.name} year={movie.year} trailer={movie.trailer} play={this.play} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+  return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} trailer={movie.trailer} rated={movie.rated} runtime={movie.runtime} plot={movie.plot} director={movie.director} actors={movie.actors} play={this.play} id={movie._id} update={this.openUpdate} delete={this.openDelete} getInfo={this.getInfo}/>
 })
 } else return movies.map((movie, i) => {
-    return <Movie key={i} name={movie.name} year={movie.year} trailer={movie.trailer} play={this.play} rating={movie.rating} url={movie.url} id={movie._id} update={this.openUpdate} delete={this.openDelete}/>
+    return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} trailer={movie.trailer} rated={movie.rated} runtime={movie.runtime} plot={movie.plot} director={movie.director} actors={movie.actors} play={this.play} id={movie._id} update={this.openUpdate} delete={this.openDelete} getInfo={this.getInfo}/>
   })
 }
-
 render() {
   const UpdateModal = () => (
     <Popup
@@ -323,12 +374,6 @@ render() {
         </label>
         <label>Year:
           <input type="text" defaultValue = {this.state.year} ref={el2 => this.element2 = el2} />
-        </label>
-        <label>Rating:
-          <input type="text" defaultValue = {this.state.rating} ref={el3 => this.element3 = el3} />
-        </label>
-        <label>Image URL:
-          <input type="text" defaultValue = {this.state.url} ref={el4 => this.element4 = el4} />
         </label>
         <label>Trailer URL:
           <input type="text" defaultValue = {this.state.trailer} ref={el5 => this.element5 = el5} />
@@ -360,12 +405,6 @@ render() {
           <label>Year:
             <input type="text" defaultValue = {this.state.year} ref={el2 => this.element2 = el2} />
           </label>
-          <label>Rating:
-            <input type="text" defaultValue = {this.state.rating} ref={el3 => this.element3 = el3} />
-          </label>
-          <label>Image URL:
-          <input type="text" defaultValue = {this.state.url} ref={el4 => this.element4 = el4} />
-        </label>
         <label>Trailer URL:
           <input type="text" defaultValue = {this.state.trailer} ref={el5 => this.element5 = el5} />
         </label>
@@ -412,6 +451,31 @@ render() {
             )}
           </Popup>
         )
+        const Info = () => (
+          <Popup
+              open = {this.state.reading}
+              modal
+              onClose={this.reset}
+              className="info"
+            >
+              {close => (
+          <div>
+            <button className="close" onClick={close}>
+              X
+            </button>
+              <span>
+              <p>{this.state.name}</p>
+              <p>{this.state.year}</p>
+              <p>{this.state.rated}</p>
+              <p>{this.state.runtime}</p>
+              <p>{this.state.plot}</p>
+              <p>Director: {this.state.director}</p>
+              <p>IMDB Rating: {this.state.rating}</p>
+              </span>
+              </div>
+              )}
+            </Popup>
+          )
   return (
     <div className="App">
       <header><h1>Movies ({this.state.count})</h1><Dropdown
@@ -427,6 +491,7 @@ render() {
       <UpdateModal/>
       <DeleteModal/>
       <Trailer/>
+      <Info/>
       <img id="loadingIcon" src="loading.gif" alt="loading"/>
       </div>
     </div>
