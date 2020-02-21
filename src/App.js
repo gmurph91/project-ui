@@ -99,10 +99,6 @@ export default class App extends Component {
     }
   }
 
-  getInfo = async (event) => {
-    
-  }
-
   addMovie = async (event) => {
     event.preventDefault()
     this.setState({
@@ -180,11 +176,24 @@ export default class App extends Component {
     })
   }
 
-  openInfo = () => {
-    this.setState({
+  getInfo = (event) => {
+    try {
+      this.setState({
+        name: event.target.name,
+        year: event.target.getAttribute('data-year'),
+        rating: event.target.getAttribute('data-rating'),
+        url: event.target.getAttribute('data-url'),
+        rated: event.target.getAttribute('data-rated'),
+        runtime: event.target.getAttribute('data-runtime'),
+        plot: event.target.getAttribute('data-plot'),
+        director: event.target.getAttribute('data-director'),
+        actors: event.target.getAttribute('data-actors'),
         reading:true,
-    })
-  }
+      })
+    } catch(e){
+      console.log(e)
+    }}
+  
 
   resetThenSet = (id, key) => {
     let temp = JSON.parse(JSON.stringify(this.state[key]));
@@ -459,19 +468,21 @@ render() {
               className="info"
             >
               {close => (
-          <div>
-            <button className="close" onClick={close}>
+          <div className="infoBox">
+            <button className="close3" onClick={close}>
               X
             </button>
-              <span>
-              <p>{this.state.name}</p>
-              <p>{this.state.year}</p>
-              <p>{this.state.rated}</p>
-              <p>{this.state.runtime}</p>
-              <p>{this.state.plot}</p>
-              <p>Director: {this.state.director}</p>
-              <p>IMDB Rating: {this.state.rating}</p>
-              </span>
+              <img src={this.state.url} alt="thumbnail"/>
+              <div className="infoHeader">
+              <p className="infoName">{this.state.name}</p>
+              <p className="infoYear">{this.state.year}</p>
+              <p className="infoRated">{this.state.rated}</p>
+              <p className="infoRuntime">{this.state.runtime}</p>
+              <p className="infoRating">IMDB Rating: {this.state.rating}</p>
+              </div>
+              <p className="infoDirector"><p className="firstWord">Director: </p>{this.state.director}</p>
+              <p className="infoActors"><p className="firstWord">Cast: </p>{this.state.actors}</p>
+              <p className="infoPlot"><p className="firstWord">Summary: </p>{this.state.plot}</p>
               </div>
               )}
             </Popup>
