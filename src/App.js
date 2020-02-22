@@ -23,6 +23,7 @@ export default class App extends Component {
     creating: false,
     playing: false,
     reading: false,
+    reducedMovies: " ",
     trailer: "",
     rated: "",
       runtime: "",
@@ -30,6 +31,7 @@ export default class App extends Component {
       director: "",
       actors: "",
       type: "",
+
     sortlist: [
       {
       id: 0,
@@ -67,7 +69,23 @@ export default class App extends Component {
   active: [{id: 0,
     title: 'By Title (A-Z)',
     selected: true,
-    key: 'sortlist'}]
+    key: 'sortlist'}],
+    switch: [
+      {
+      id: 6,
+      title: 'Movies',
+      selected: false,
+      key: 'switch'
+},{
+  id: 7,
+  title: 'TV Shows',
+  selected: false,
+  key: 'switch'
+}], 
+switched: [{id: 6,
+  title: 'Movies',
+  selected: true,
+  key: 'switch'}],
     }}
 
   componentDidMount() {
@@ -203,9 +221,21 @@ export default class App extends Component {
     let temp = JSON.parse(JSON.stringify(this.state[key]));
     temp.forEach(item => item.selected = false);
     temp[id].selected = true;
+    console.log(temp[id])
     this.setState({
           active: temp[id]
     });
+}
+
+resetThenSet2 = (id, key) => {
+  let temp2 = JSON.parse(JSON.stringify(this.state[key]));
+  
+  temp2.forEach(item => item.selected = false);
+  console.log(temp2[id])
+  temp2[id].selected = true;
+  this.setState({
+        switched: temp2[id]
+  });
 }
 
   deleteMovie = async () => {
@@ -308,17 +338,16 @@ export default class App extends Component {
 
   renderMovies = () => {
     try{
+    if(this.state.reducedMovies === " "){
     let all = this.state.movies
-    let reduction = all.reduce( function(acc, obj) {
-      let key = obj["type"]
-      if (!acc[key]) {
-        acc[key] = []
-      }
-      acc[key].push(obj)
-      return acc
-    })
-    let movies = reduction.movie
-    let series = reduction.series
+    var filtered =  all.filter(function(movie) {
+      return movie.type === "movie";
+    });
+    var filtered2 =  all.filter(function(movie) {
+      return movie.type === "series";
+    });
+  } let movies = filtered
+  let shows = filtered2
     if (this.state.active.id===0){
     let sortedMovies = movies.sort((function(a,b){
       let nameA = String(a.name).replace( /^(an?|the)\s/i, '' );
@@ -507,11 +536,19 @@ render() {
           )
   return (
     <div className="App">
-      <header><h1>Movies ({this.state.count})</h1><Dropdown
+      <header><h1>Movies ({this.state.count})</h1>
+      <Dropdown
+                              title="Movies"
+                              list={this.state.switch}
+                              resetThenSet={this.resetThenSet2}
+                        />
+
+      <Dropdown
                               title="Sort"
                               list={this.state.sortlist}
                               resetThenSet={this.resetThenSet}
                         />
+
       <button className="bluebutton new" onClick={this.openCreate}>New</button>
       </header>
       <div className="main">
