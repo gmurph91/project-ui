@@ -25,6 +25,7 @@ export default class App extends Component {
     reading: false,
     reducedMovies: " ",
     trailer: "",
+    selected: "movies",
     rated: "",
       runtime: "",
       plot: "",
@@ -70,22 +71,7 @@ export default class App extends Component {
     title: 'By Title (A-Z)',
     selected: true,
     key: 'sortlist'}],
-    switch: [
-      {
-      id: 6,
-      title: 'Movies',
-      selected: false,
-      key: 'switch'
-},{
-  id: 7,
-  title: 'TV Shows',
-  selected: false,
-  key: 'switch'
-}], 
-switched: [{id: 6,
-  title: 'Movies',
-  selected: true,
-  key: 'switch'}],
+    
     }}
 
   componentDidMount() {
@@ -109,8 +95,8 @@ switched: [{id: 6,
               movies: await response.data,
             })
             this.setState({
-              count: this.state.movies.length,
-              loading: false
+              loading: false,
+              count: this.state.movies.length
             })
             this.loading()
     } catch (err) {
@@ -221,21 +207,16 @@ switched: [{id: 6,
     let temp = JSON.parse(JSON.stringify(this.state[key]));
     temp.forEach(item => item.selected = false);
     temp[id].selected = true;
-    console.log(temp[id])
     this.setState({
           active: temp[id]
     });
 }
 
-resetThenSet2 = (id, key) => {
-  let temp2 = JSON.parse(JSON.stringify(this.state[key]));
-  
-  temp2.forEach(item => item.selected = false);
-  console.log(temp2[id])
-  temp2[id].selected = true;
+selector = async (event) => {
   this.setState({
-        switched: temp2[id]
-  });
+    selected: event.target.value
+  })
+  await (this.setState({event}))
 }
 
   deleteMovie = async () => {
@@ -338,16 +319,19 @@ resetThenSet2 = (id, key) => {
 
   renderMovies = () => {
     try{
-    if(this.state.reducedMovies === " "){
+    if(this.state.reducedMovies === " " && this.state.selected === "movies"){
     let all = this.state.movies
     var filtered =  all.filter(function(movie) {
       return movie.type === "movie";
-    });
-    var filtered2 =  all.filter(function(movie) {
+    })
+  } else {
+    let all = this.state.movies
+    // eslint-disable-next-line
+    var filtered =  all.filter(function(movie) {
       return movie.type === "series";
     });
-  } let movies = filtered
-  let shows = filtered2
+  } 
+  let movies = filtered
     if (this.state.active.id===0){
     let sortedMovies = movies.sort((function(a,b){
       let nameA = String(a.name).replace( /^(an?|the)\s/i, '' );
@@ -536,12 +520,11 @@ render() {
           )
   return (
     <div className="App">
-      <header><h1>Movies ({this.state.count})</h1>
-      <Dropdown
-                              title="Movies"
-                              list={this.state.switch}
-                              resetThenSet={this.resetThenSet2}
-                        />
+      <header><h1>{this.state.selected} ({this.state.count})</h1>
+      <select onChange={this.selector}>
+        <option value="movies">Movies</option>
+        <option value="shows">TV Shows</option>
+      </select>
 
       <Dropdown
                               title="Sort"
