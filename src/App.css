@@ -276,37 +276,6 @@ span {
   margin-right: 3px;
 }
 
-.dd-wrapper {
-  font-size: 16px !important;
-  width: 16% !important;
-  min-width: 150px;
-  align-self: center;
-  margin-left: 16px;
-}
-
-.dd-wrapper .dd-header {
-  line-height: 20px !important;
-  background-color: black !important;
-  color: white;
-}
-
-.dd-wrapper .dd-list {
-  padding: 0px !important;
-  overflow-y: hidden !important;
-  border: none !important;
-  background-color: black !important;
-    color: white;
-}
-
-.dd-wrapper .dd-header-title {
-  margin: 2px 8px !important;
-}
-
-.dd-wrapper .dd-list-item:hover {
-  color: #fff;
-  background-color: rgb(46,124,228) !important;
-}
-
 .moviedesc {
   overflow-x: hidden;
   text-overflow: ellipsis;
@@ -320,7 +289,8 @@ span {
   position: relative;
 	padding-bottom: 48.25% !important; /* 16:9 */
 	padding-top: 25px !important;
-	height: 0;
+  height: 0;
+  max-height: 95%;
 }
 
 .trailer-content iframe {
@@ -373,7 +343,7 @@ span {
   background: #626262;
   border: none;
   border-radius: 50%;
-  top: -38px;
+  top: -30px;
   height: 28px;
   width: 28px;
   font-size: 20px;
@@ -506,17 +476,42 @@ span {
   font-size: 20px;
 }
 
-select {
-    border: none;
-    font-size: 21px !important;
-    background-color: black;
-    color: white;
+.sortSelect {
+  width: 200px;
+  margin-right: 10px;
+}
+
+.sortSelect__control {
+  background-color: black !important;
 }
 
 
+.sortSelect__menu {
+  background-color: black !important;
+  margin-top: 1px !important;
+}
 
-option {
-  -webkit-appearance:none;
-    background-color: black;
-    font-size: 16px !important;
+.sortSelect__menu-list {
+  background-color: black !important;
+  color: white;
+  text-align: left;
+}
+
+/* selected */
+.sortSelect__option {
+  background-color: black !important;
+}
+
+.sortSelect__option:active {
+  background-color: rgb(46,124,228) !important;
+  color: white;
+}
+
+.sortSelect__option:hover {
+  background-color: rgb(46,124,228) !important;
+}
+
+
+.sortSelect__single-value {
+  color: white !important;
 }
