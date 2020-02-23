@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import './App.css';
 import Movie from './components/movie';
 import Popup from "reactjs-popup";
-import { Dropdown } from 'reactjs-dropdown-component';
 const axios = require('axios');
 require('dotenv').config()
 
@@ -18,6 +17,7 @@ export default class App extends Component {
     loading: true,
     url: "",
     count: "0",
+    count2: "0",
     updating: false,
     deleting: false,
     creating: false,
@@ -27,52 +27,13 @@ export default class App extends Component {
     trailer: "",
     selected: "movies",
     rated: "",
-      runtime: "",
-      plot: "",
-      director: "",
-      actors: "",
-      type: "",
-
-    sortlist: [
-      {
-      id: 0,
-      title: 'By Title (A-Z)',
-      selected: true,
-      key: 'sortlist'
-},{
-  id: 1,
-  title: 'By Title (Z-A)',
-  selected: false,
-  key: 'sortlist'
-},{
-  id: 2,
-  title: 'By Year (Newest)',
-  selected: false,
-  key: 'sortlist'
-},{
-  id: 3,
-  title: 'By Year (Oldest)',
-  selected: false,
-  key: 'sortlist'
-},
-{
-  id: 4,
-  title: 'By Rating (Highest)',
-  selected: false,
-  key: 'sortlist'
-},{
-  id: 5,
-  title: 'By Rating (Lowest)',
-  selected: false,
-  key: 'sortlist'
-},
-], 
-  active: [{id: 0,
-    title: 'By Title (A-Z)',
-    selected: true,
-    key: 'sortlist'}],
-    
-    }}
+    runtime: "",
+    plot: "",
+    director: "",
+    actors: "",
+    type: "",
+    sort: "",
+  }}
 
   componentDidMount() {
     this.getMovies()
@@ -96,12 +57,24 @@ export default class App extends Component {
             })
             this.setState({
               loading: false,
-              count: this.state.movies.length
             })
+            this.count()
             this.loading()
     } catch (err) {
       console.error(err);
     }
+  }
+
+  count = () => {
+             let all = this.state.movies
+              let filtered =  all.filter(function(movie) {
+                return movie.type === "movie";})
+                let filtered2 =  all.filter(function(movie) {
+                  return movie.type === "series";})
+            this.setState({
+              count: filtered.length,
+              count2: filtered2.length
+            })
   }
 
   addMovie = async (event) => {
@@ -203,20 +176,16 @@ export default class App extends Component {
     }}
   
 
-  resetThenSet = (id, key) => {
-    let temp = JSON.parse(JSON.stringify(this.state[key]));
-    temp.forEach(item => item.selected = false);
-    temp[id].selected = true;
+  selector2 = async (event) => {
     this.setState({
-          active: temp[id]
-    });
+      sort: event.target.value
+    })
 }
 
 selector = async (event) => {
   this.setState({
     selected: event.target.value
   })
-  await (this.setState({event}))
 }
 
   deleteMovie = async () => {
@@ -332,7 +301,7 @@ selector = async (event) => {
     });
   } 
   let movies = filtered
-    if (this.state.active.id===0){
+    if (this.state.sort==="titleA"){
     let sortedMovies = movies.sort((function(a,b){
       let nameA = String(a.name).replace( /^(an?|the)\s/i, '' );
       let nameB = String(b.name).replace( /^(an?|the)\s/i, '' );
@@ -343,7 +312,7 @@ selector = async (event) => {
     return sortedMovies.map((movie, i) => {
       return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} trailer={movie.trailer} rated={movie.rated} runtime={movie.runtime} plot={movie.plot} director={movie.director} actors={movie.actors} play={this.play} id={movie._id} update={this.openUpdate} delete={this.openDelete} getInfo={this.getInfo}/>
     })
-  } else if (this.state.active.id===1){
+  } else if (this.state.sort==="titleZ"){
       let sortedMovies = movies.sort((function(a,b){
       let nameA = String(a.name).replace( /^(an?|the)\s/i, '' );
       let nameB = String(b.name).replace( /^(an?|the)\s/i, '' );
@@ -354,7 +323,7 @@ selector = async (event) => {
     return sortedMovies.map((movie, i) => {
       return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} trailer={movie.trailer} rated={movie.rated} runtime={movie.runtime} plot={movie.plot} director={movie.director} actors={movie.actors} play={this.play} id={movie._id} update={this.openUpdate} delete={this.openDelete} getInfo={this.getInfo}/>
     })
-  } else if (this.state.active.id===2){
+  } else if (this.state.sort==="yearA"){
     let sortedMovies = movies.sort((function(a,b){
       if(b.year < a.year) { return -1; }
       if(b.year > a.year) { return 1; }
@@ -363,7 +332,7 @@ selector = async (event) => {
   return sortedMovies.map((movie, i) => {
     return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} trailer={movie.trailer} rated={movie.rated} runtime={movie.runtime} plot={movie.plot} director={movie.director} actors={movie.actors} play={this.play} id={movie._id} update={this.openUpdate} delete={this.openDelete} getInfo={this.getInfo}/>
   })
-} else if (this.state.active.id===3){
+} else if (this.state.sort==="yearZ"){
   let sortedMovies = movies.sort((function(a,b){
     if(a.year < b.year) { return -1; }
       if(a.year > b.year) { return 1; }
@@ -372,7 +341,7 @@ selector = async (event) => {
 return sortedMovies.map((movie, i) => {
   return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} trailer={movie.trailer} rated={movie.rated} runtime={movie.runtime} plot={movie.plot} director={movie.director} actors={movie.actors} play={this.play} id={movie._id} update={this.openUpdate} delete={this.openDelete} getInfo={this.getInfo}/>
 })
-} else if (this.state.active.id===4){
+} else if (this.state.sort==="ratingA"){
   let sortedMovies = movies.sort((function(a,b){
     if(b.rating < a.rating) { return -1; }
     if(b.rating > a.rating) { return 1; }
@@ -381,7 +350,7 @@ return sortedMovies.map((movie, i) => {
 return sortedMovies.map((movie, i) => {
   return <Movie key={i} name={movie.name} year={movie.year} rating={movie.rating} url={movie.url} trailer={movie.trailer} rated={movie.rated} runtime={movie.runtime} plot={movie.plot} director={movie.director} actors={movie.actors} play={this.play} id={movie._id} update={this.openUpdate} delete={this.openDelete} getInfo={this.getInfo}/>
 })
-} else if (this.state.active.id===5){
+} else if (this.state.sort==="ratingZ"){
 let sortedMovies = movies.sort((function(a,b){
   if(a.rating < b.rating) { return -1; }
     if(a.rating > b.rating) { return 1; }
@@ -520,17 +489,20 @@ render() {
           )
   return (
     <div className="App">
-      <header><h1>{this.state.selected} ({this.state.count})</h1>
+      <header>
       <select onChange={this.selector}>
-        <option value="movies">Movies</option>
-        <option value="shows">TV Shows</option>
+        <option value="movies">Movies ({this.state.count})</option>
+        <option value="shows">TV Shows ({this.state.count2})</option>
       </select>
-
-      <Dropdown
-                              title="Sort"
-                              list={this.state.sortlist}
-                              resetThenSet={this.resetThenSet}
-                        />
+      <select onChange={this.selector2}>
+      <option value="titleA">Sort:</option>
+        <option value="titleA">By Title (A-Z)</option>
+        <option value="titleZ">By Title (Z-A)</option>
+        <option value="yearA">By Year (Newest)</option>
+        <option value="yearZ">By Year (Oldest)</option>
+        <option value="ratingA">By Rating (Highest)</option>
+        <option value="ratingZ">By Rating (Lowest)</option>
+      </select>
 
       <button className="bluebutton new" onClick={this.openCreate}>New</button>
       </header>
