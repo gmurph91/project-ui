@@ -117,7 +117,7 @@ export default class App extends Component {
     await (this.setState({ event }))
     let t = this.state.name
     let y = this.state.year
-    const response = await axios.get(`http://www.omdbapi.com/?t=${t}&y=${y}&apikey=cea84f0e`);
+    const response = await axios.get(`https://www.omdbapi.com/?t=${t}&y=${y}&apikey=cea84f0e`);
     await response
     if(response.data.Response==="False"){alert(`Could not find a match for that query.  Please type in the exact title and try again.`)}
     this.setState({
@@ -292,7 +292,7 @@ export default class App extends Component {
     await (this.setState({ event }))
     let t = this.state.name
     let y = this.state.year
-    const response = await axios.get(`http://www.omdbapi.com/?t=${t}&y=${y}&apikey=cea84f0e`);
+    const response = await axios.get(`https://www.omdbapi.com/?t=${t}&y=${y}&apikey=cea84f0e`);
     this.setState({
       year: response.data.Year,
       rating: response.data.imdbRating,
