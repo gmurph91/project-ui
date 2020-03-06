@@ -105,6 +105,7 @@ export default class App extends Component {
       document.querySelector(".sortSelect__single-value").appendChild(span2);
     }
   }
+  
 
   addMovie = async (event) => {
     event.preventDefault()
